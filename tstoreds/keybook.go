@@ -185,10 +185,6 @@ func (kb *dsKeyBook) ThreadsFromKeys() (thread.IDSlice, error) {
 	return ids, nil
 }
 
-func genKeyRead(t thread.ID, p peer.ID) ds.Key {
-	return genBaseKey(t, p).Child(readSuffix)
-}
-
 func genBaseKey(t thread.ID, p peer.ID) ds.Key {
 	key := kbBase
 	key = key.ChildString(base32.RawStdEncoding.EncodeToString(t.Bytes()))
