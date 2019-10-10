@@ -18,6 +18,7 @@ type customGogoType interface {
 	json.Marshaler
 	json.Unmarshaler
 	proto.Sizer
+	MarshalTo(data []byte) (n int, err error)
 }
 
 // ProtoThreadID is a custom type used by gogo to serde raw thread IDs into the thread.ID type, and back.
@@ -141,7 +142,7 @@ type HeadCid struct {
 
 var _ customGogoType = (*HeadCid)(nil)
 
-func (hc *HeadCid) Marshal() ([]byte, error) {
+func (hc HeadCid) Marshal() ([]byte, error) {
 	return hc.Bytes(), nil
 }
 
@@ -150,7 +151,7 @@ func (hc *HeadCid) Unmarshal(data []byte) (err error) {
 	return err
 }
 
-func (hc *HeadCid) MarshalJSON() ([]byte, error) {
+func (hc HeadCid) MarshalJSON() ([]byte, error) {
 	m, _ := hc.Marshal()
 	return json.Marshal(m)
 }
@@ -166,4 +167,8 @@ func (hc *HeadCid) UnmarshalJSON(data []byte) error {
 
 func (hc *HeadCid) Size() int {
 	return len(hc.Bytes())
+}
+
+func (hc HeadCid) MarshalTo(data []byte) (n int, err error) {
+	return copy(data, []byte(hc.Bytes())), nil
 }
