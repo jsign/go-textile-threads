@@ -48,7 +48,7 @@ func TestDatastoreKeyBook(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			pt.KeyBookTest(t, keyBookFactory(t, dsFactory))
-		}
+		})
 	}
 }
 
