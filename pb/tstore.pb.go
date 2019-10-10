@@ -128,33 +128,121 @@ func (m *AddrBookRecord_AddrEntry) GetTtl() int64 {
 	return 0
 }
 
+// HeadBookRecord represents the list of heads currently in a log
+type HeadBookRecord struct {
+	// List of current heads of a log
+	Heads []*HeadBookRecord_HeadEntry `protobuf:"bytes,1,rep,name=heads,proto3" json:"heads,omitempty"`
+}
+
+func (m *HeadBookRecord) Reset()         { *m = HeadBookRecord{} }
+func (m *HeadBookRecord) String() string { return proto.CompactTextString(m) }
+func (*HeadBookRecord) ProtoMessage()    {}
+func (*HeadBookRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74b294050729ac9e, []int{1}
+}
+func (m *HeadBookRecord) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HeadBookRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_HeadBookRecord.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *HeadBookRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeadBookRecord.Merge(m, src)
+}
+func (m *HeadBookRecord) XXX_Size() int {
+	return m.Size()
+}
+func (m *HeadBookRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeadBookRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeadBookRecord proto.InternalMessageInfo
+
+func (m *HeadBookRecord) GetHeads() []*HeadBookRecord_HeadEntry {
+	if m != nil {
+		return m.Heads
+	}
+	return nil
+}
+
+type HeadBookRecord_HeadEntry struct {
+	Cid *HeadCid `protobuf:"bytes,1,opt,name=cid,proto3,customtype=HeadCid" json:"cid,omitempty"`
+}
+
+func (m *HeadBookRecord_HeadEntry) Reset()         { *m = HeadBookRecord_HeadEntry{} }
+func (m *HeadBookRecord_HeadEntry) String() string { return proto.CompactTextString(m) }
+func (*HeadBookRecord_HeadEntry) ProtoMessage()    {}
+func (*HeadBookRecord_HeadEntry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74b294050729ac9e, []int{1, 0}
+}
+func (m *HeadBookRecord_HeadEntry) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HeadBookRecord_HeadEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_HeadBookRecord_HeadEntry.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *HeadBookRecord_HeadEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeadBookRecord_HeadEntry.Merge(m, src)
+}
+func (m *HeadBookRecord_HeadEntry) XXX_Size() int {
+	return m.Size()
+}
+func (m *HeadBookRecord_HeadEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeadBookRecord_HeadEntry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeadBookRecord_HeadEntry proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*AddrBookRecord)(nil), "thread.pb.AddrBookRecord")
 	proto.RegisterType((*AddrBookRecord_AddrEntry)(nil), "thread.pb.AddrBookRecord.AddrEntry")
+	proto.RegisterType((*HeadBookRecord)(nil), "thread.pb.HeadBookRecord")
+	proto.RegisterType((*HeadBookRecord_HeadEntry)(nil), "thread.pb.HeadBookRecord.HeadEntry")
 }
 
 func init() { proto.RegisterFile("tstore.proto", fileDescriptor_74b294050729ac9e) }
 
 var fileDescriptor_74b294050729ac9e = []byte{
-	// 276 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x29, 0x29, 0x2e, 0xc9,
-	0x2f, 0x4a, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x2c, 0xc9, 0x28, 0x4a, 0x4d, 0x4c,
-	0xd1, 0x2b, 0x48, 0x92, 0xd2, 0x4d, 0xcf, 0x2c, 0xc9, 0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5,
-	0x4f, 0xcf, 0x4f, 0xcf, 0xd7, 0x07, 0xab, 0x48, 0x2a, 0x4d, 0x03, 0xf3, 0xc0, 0x1c, 0x30, 0x0b,
-	0xa2, 0x53, 0xe9, 0x2f, 0x23, 0x17, 0x9f, 0x63, 0x4a, 0x4a, 0x91, 0x53, 0x7e, 0x7e, 0x76, 0x50,
-	0x6a, 0x72, 0x7e, 0x51, 0x8a, 0x90, 0x2e, 0x17, 0x07, 0xc4, 0x38, 0x4f, 0x17, 0x09, 0x46, 0x05,
-	0x46, 0x0d, 0x1e, 0x27, 0xc1, 0x5b, 0xf7, 0xe4, 0x79, 0x03, 0x40, 0xea, 0x43, 0xa0, 0x12, 0x41,
-	0x70, 0x25, 0x42, 0xea, 0x5c, 0x6c, 0x05, 0xa9, 0xa9, 0x45, 0x9e, 0x2e, 0x12, 0x4c, 0x60, 0xc5,
-	0xfc, 0xb7, 0xee, 0xc9, 0x73, 0x83, 0x15, 0x07, 0x80, 0x85, 0x83, 0xa0, 0xd2, 0x42, 0x96, 0x5c,
-	0xac, 0x89, 0x29, 0x29, 0x45, 0xc5, 0x12, 0xcc, 0x0a, 0xcc, 0x1a, 0xdc, 0x46, 0xca, 0x7a, 0x70,
-	0x47, 0xeb, 0xa1, 0xba, 0x00, 0xcc, 0x75, 0xcd, 0x2b, 0x29, 0xaa, 0x0c, 0x82, 0xe8, 0x90, 0x8a,
-	0xe0, 0xe2, 0x84, 0x8b, 0x09, 0x29, 0x72, 0xb1, 0x80, 0x44, 0xa1, 0x6e, 0xe3, 0xbd, 0x75, 0x4f,
-	0x9e, 0x13, 0x6c, 0x1d, 0x48, 0x45, 0x10, 0x58, 0x4a, 0x48, 0x8c, 0x8b, 0x2d, 0xb5, 0xa2, 0x20,
-	0xb3, 0xa8, 0x12, 0xec, 0x26, 0xe6, 0x20, 0x28, 0x4f, 0x48, 0x80, 0x8b, 0xb9, 0xa4, 0x24, 0x47,
-	0x82, 0x19, 0x2c, 0x08, 0x62, 0x3a, 0x49, 0x9c, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3,
-	0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c,
-	0x43, 0x12, 0x1b, 0x38, 0x80, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x57, 0x46, 0x62, 0xf3,
-	0x6a, 0x01, 0x00, 0x00,
+	// 327 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x91, 0x4d, 0x4b, 0xc3, 0x30,
+	0x18, 0xc7, 0x17, 0xeb, 0xa6, 0x7d, 0xf6, 0xa2, 0xe6, 0x20, 0x65, 0x60, 0x3b, 0xe7, 0xc1, 0x21,
+	0xac, 0x03, 0x3d, 0xed, 0xe8, 0x9c, 0xe0, 0x6e, 0x23, 0x78, 0xf0, 0xda, 0x2e, 0x71, 0x2b, 0xbe,
+	0xa4, 0x64, 0x19, 0xba, 0x6f, 0xe1, 0xc7, 0xf2, 0xb8, 0xa3, 0xf4, 0x50, 0x64, 0xfb, 0x1c, 0x82,
+	0xf4, 0x69, 0x28, 0x0e, 0x6f, 0xcf, 0xff, 0xe5, 0x49, 0x7e, 0x21, 0x50, 0xd3, 0x73, 0x2d, 0x95,
+	0xf0, 0x63, 0x25, 0xb5, 0xa4, 0xb6, 0x9e, 0x29, 0x11, 0x70, 0x3f, 0x0e, 0x9b, 0xdd, 0x69, 0xa4,
+	0x67, 0x8b, 0xd0, 0x9f, 0xc8, 0x97, 0xde, 0x54, 0x4e, 0x65, 0x0f, 0x1b, 0xe1, 0xe2, 0x11, 0x15,
+	0x0a, 0x9c, 0xf2, 0xcd, 0xf6, 0x0f, 0x81, 0xc6, 0x35, 0xe7, 0x6a, 0x20, 0xe5, 0x13, 0x13, 0x13,
+	0xa9, 0x38, 0xed, 0xc2, 0x7e, 0x7e, 0xdc, 0x68, 0xe8, 0x90, 0x16, 0xe9, 0xd4, 0x06, 0x47, 0x49,
+	0xea, 0xd5, 0xc7, 0x59, 0xff, 0xde, 0x04, 0xac, 0xa8, 0xd0, 0x73, 0xa8, 0xc4, 0x42, 0xa8, 0xd1,
+	0xd0, 0xd9, 0xc1, 0xf2, 0x41, 0x92, 0x7a, 0x55, 0x2c, 0x8f, 0xd1, 0x66, 0x26, 0xa6, 0x7d, 0x28,
+	0x07, 0x9c, 0xab, 0xb9, 0x63, 0xb5, 0xac, 0x4e, 0xf5, 0xf2, 0xcc, 0x2f, 0xa0, 0xfd, 0x6d, 0x02,
+	0x94, 0xb7, 0xaf, 0x5a, 0x2d, 0x59, 0xbe, 0xd1, 0x7c, 0x00, 0xbb, 0xf0, 0xe8, 0x29, 0xec, 0x66,
+	0xae, 0x61, 0xab, 0x27, 0xa9, 0x67, 0xe3, 0x75, 0x59, 0x83, 0x61, 0x44, 0x8f, 0xa1, 0x22, 0xde,
+	0xe3, 0x48, 0x2d, 0x91, 0xc9, 0x62, 0x46, 0xd1, 0x43, 0xb0, 0xb4, 0x7e, 0x76, 0x2c, 0x34, 0xb3,
+	0xb1, 0xfd, 0x06, 0x8d, 0x3b, 0x11, 0xf0, 0x3f, 0xcf, 0xef, 0x43, 0x79, 0x26, 0x02, 0x3e, 0x77,
+	0xc8, 0x3f, 0xcc, 0xed, 0x26, 0x4a, 0x83, 0x89, 0x1b, 0xcd, 0x0b, 0xb0, 0x0b, 0x8f, 0x9e, 0x80,
+	0x35, 0x89, 0xb8, 0xa1, 0xac, 0x26, 0xa9, 0xb7, 0x97, 0x65, 0x37, 0x11, 0x67, 0x99, 0x3f, 0x70,
+	0x3e, 0xd7, 0x2e, 0x59, 0xad, 0x5d, 0xf2, 0xbd, 0x76, 0xc9, 0xc7, 0xc6, 0x2d, 0xad, 0x36, 0x6e,
+	0xe9, 0x6b, 0xe3, 0x96, 0xc2, 0x0a, 0xfe, 0xcc, 0xd5, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd5,
+	0x6e, 0x6d, 0x15, 0xe3, 0x01, 0x00, 0x00,
 }
 
 func (m *AddrBookRecord) Marshal() (dAtA []byte, err error) {
@@ -245,6 +333,64 @@ func (m *AddrBookRecord_AddrEntry) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *HeadBookRecord) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *HeadBookRecord) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Heads) > 0 {
+		for _, msg := range m.Heads {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintTstore(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *HeadBookRecord_HeadEntry) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *HeadBookRecord_HeadEntry) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Cid != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintTstore(dAtA, i, uint64(m.Cid.Size()))
+		n4, err := m.Cid.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
+	return i, nil
+}
+
 func encodeVarintTstore(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -292,6 +438,34 @@ func (m *AddrBookRecord_AddrEntry) Size() (n int) {
 	}
 	if m.Ttl != 0 {
 		n += 1 + sovTstore(uint64(m.Ttl))
+	}
+	return n
+}
+
+func (m *HeadBookRecord) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Heads) > 0 {
+		for _, e := range m.Heads {
+			l = e.Size()
+			n += 1 + l + sovTstore(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *HeadBookRecord_HeadEntry) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Cid != nil {
+		l = m.Cid.Size()
+		n += 1 + l + sovTstore(uint64(l))
 	}
 	return n
 }
@@ -568,6 +742,181 @@ func (m *AddrBookRecord_AddrEntry) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTstore(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *HeadBookRecord) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTstore
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: HeadBookRecord: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: HeadBookRecord: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Heads", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTstore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTstore
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Heads = append(m.Heads, &HeadBookRecord_HeadEntry{})
+			if err := m.Heads[len(m.Heads)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTstore(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *HeadBookRecord_HeadEntry) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTstore
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: HeadEntry: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: HeadEntry: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTstore
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTstore
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTstore
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			var v HeadCid
+			m.Cid = &v
+			if err := m.Cid.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTstore(dAtA[iNdEx:])

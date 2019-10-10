@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	proto "github.com/gogo/protobuf/proto"
+	"github.com/ipfs/go-cid"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/textileio/go-textile-core/thread"
@@ -131,4 +132,38 @@ func (a *ProtoAddr) UnmarshalJSON(data []byte) error {
 
 func (a ProtoAddr) Size() int {
 	return len(a.Bytes())
+}
+
+// HeadCID is a custom type used by gogo to serde raw log heads into a CIDtype, and back.
+type HeadCid struct {
+	cid.Cid
+}
+
+var _ customGogoType = (*HeadCid)(nil)
+
+func (hc *HeadCid) Marshal() ([]byte, error) {
+	return hc.Bytes(), nil
+}
+
+func (hc *HeadCid) Unmarshal(data []byte) (err error) {
+	hc.Cid, err = cid.Cast(data)
+	return err
+}
+
+func (hc *HeadCid) MarshalJSON() ([]byte, error) {
+	m, _ := hc.Marshal()
+	return json.Marshal(m)
+}
+
+func (hc *HeadCid) UnmarshalJSON(data []byte) error {
+	var v []byte
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+	return hc.Unmarshal(v)
+}
+
+func (hc *HeadCid) Size() int {
+	return len(hc.Bytes())
 }
