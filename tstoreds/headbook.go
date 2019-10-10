@@ -44,13 +44,15 @@ func (hb *dsHeadBook) AddHeads(t thread.ID, p peer.ID, heads []cid.Cid) {
 		panic(fmt.Sprintf("error when creating txn in datastore: %v", err))
 	}
 	key := genBaseHead(t, p)
-	v, err := txn.Get(key)
-	if err != nil {
-		panic(fmt.Sprintf("error when getting current heads from log %v: %v", key, err))
-	}
 	hr := pb.HeadBookRecord{}
-	if err := proto.Unmarshal(v, &hr); err != nil {
-		panic(fmt.Sprintf("error unmarshaling headbookrecord proto: %v", err))
+	v, err := txn.Get(key)
+	if err == nil {
+		if err := proto.Unmarshal(v, &hr); err != nil {
+			panic(fmt.Sprintf("error unmarshaling headbookrecord proto: %v", err))
+		}
+	}
+	if err != nil && err != ds.ErrNotFound {
+		panic(fmt.Sprintf("error when getting current heads from log %v: %v", key, err))
 	}
 
 	set := make(map[cid.Cid]struct{})
@@ -105,6 +107,9 @@ func (hb *dsHeadBook) SetHeads(t thread.ID, p peer.ID, heads []cid.Cid) {
 func (hb *dsHeadBook) Heads(t thread.ID, p peer.ID) []cid.Cid {
 	key := genBaseHead(t, p)
 	v, err := hb.ds.Get(key)
+	if err == ds.ErrNotFound {
+		return nil
+	}
 	if err != nil {
 		panic(fmt.Sprintf("error when getting current heads from log %v: %v", key, err))
 	}
