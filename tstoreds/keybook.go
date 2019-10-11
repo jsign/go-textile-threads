@@ -7,7 +7,6 @@ import (
 	"github.com/ipfs/go-datastore/query"
 	ic "github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/pkg/errors"
 	"github.com/textileio/go-textile-core/thread"
 	tstore "github.com/textileio/go-textile-core/threadstore"
 	"github.com/whyrusleeping/base32"
@@ -38,13 +37,13 @@ func NewKeyBook(store ds.Datastore) (tstore.KeyBook, error) {
 // PubKey returns the public key of (thread.ID, peer.ID). The implementation
 // assumes the key is in the store with the exception that peer.ID is an
 // Identity multihash. If the public key can't be resolved, nil is returned.
-func (kb *dsKeyBook) PubKey(t thread.ID, p peer.ID) ic.PubKey {
+func (kb *dsKeyBook) PubKey(t thread.ID, p peer.ID) (ic.PubKey, error) {
 	key := genBaseKey(t, p).Child(pubSuffix)
 
 	var pk ic.PubKey
 	if v, err := kb.ds.Get(key); err == nil {
 		if pk, err = ic.UnmarshalPublicKey(v); err != nil {
-			log.Errorf("store backed public key %v can't be unmarshaled: %v", key, err)
+			return nil, fmt.Errorf("store backed public key %v can't be unmarshaled: %w", key, err)
 		}
 	} else if err == ds.ErrNotFound {
 		pk, err = p.ExtractPublicKey()
@@ -52,31 +51,30 @@ func (kb *dsKeyBook) PubKey(t thread.ID, p peer.ID) ic.PubKey {
 		case nil:
 			pkb, err := pk.Bytes()
 			if err != nil {
-				log.Errorf("error when getting bytes from identity multihashed public key %v: %v", key, err)
-				return nil
+				return nil, fmt.Errorf("error when getting bytes from identity multihashed public key %v: %w", key, err)
 			}
 			if kb.ds.Put(key, pkb) != nil {
-				log.Errorf("error when putting identity multihashed public key %v in store: %v", key, err)
+				return nil, fmt.Errorf("error when putting identity multihashed public key %v in store: %w", key, err)
 			}
 		case peer.ErrNoPublicKey:
-			log.Infof("missing stored public key %v isn't an identity multihash", key)
+			return nil, fmt.Errorf("missing stored public key %v and isn't an identity multihash", key)
 		default:
-			log.Errorf("missing stored public key %v errored while extracting public key: %v", key, err)
+			return nil, fmt.Errorf("missing stored public key %v errored while extracting public key: %w", key, err)
 		}
 	} else {
-		log.Errorf("error when getting key %v from store", key)
+		return nil, fmt.Errorf("error when getting key %v from store", key)
 	}
-	return pk
+	return pk, nil
 }
 
 // AddPubKey adds the public key of peer.ID which should match accordingly.
 func (kb *dsKeyBook) AddPubKey(t thread.ID, p peer.ID, pk ic.PubKey) error {
 	if pk == nil {
-		return errors.New("public key is nil")
+		return fmt.Errorf("public key is nil")
 	}
 
 	if !p.MatchesPublicKey(pk) {
-		return errors.New("log ID doesn't provided match public key")
+		return fmt.Errorf("log ID doesn't provided match public key")
 	}
 	val, err := pk.Bytes()
 	if err != nil {
@@ -91,28 +89,26 @@ func (kb *dsKeyBook) AddPubKey(t thread.ID, p peer.ID, pk ic.PubKey) error {
 
 // PrivKey returns the private key of (thread.ID, peer.ID). If not private key
 // is stored, returns nil.
-func (kb *dsKeyBook) PrivKey(t thread.ID, p peer.ID) ic.PrivKey {
+func (kb *dsKeyBook) PrivKey(t thread.ID, p peer.ID) (ic.PrivKey, error) {
 	key := genBaseKey(t, p).Child(privSuffix)
 	v, err := kb.ds.Get(key)
 	if err != nil {
-		log.Errorf("error when getting private key for %v", key)
-		return nil
+		return nil, fmt.Errorf("error when getting private key for %s", key)
 	}
 	sk, err := ic.UnmarshalPrivateKey(v)
 	if err != nil {
-		log.Errorf("error when unmarshaling private key of %v", key)
-		return nil
+		return nil, fmt.Errorf("error when unmarshaling private key of %v", key)
 	}
-	return sk
+	return sk, nil
 }
 
 // AddPrivKey adds the private key of peer.ID which should match accordingly.
 func (kb *dsKeyBook) AddPrivKey(t thread.ID, p peer.ID, sk ic.PrivKey) error {
 	if sk == nil {
-		return errors.New("private key is nil")
+		return fmt.Errorf("private key is nil")
 	}
 	if !p.MatchesPrivateKey(sk) {
-		return errors.New("peer ID doesn't match with private key")
+		return fmt.Errorf("peer ID doesn't match with private key")
 	}
 	skb, err := sk.Bytes()
 	if err != nil {
@@ -127,20 +123,19 @@ func (kb *dsKeyBook) AddPrivKey(t thread.ID, p peer.ID, sk ic.PrivKey) error {
 
 // ReadKey returns the read key associated with peer.ID for thread.ID thread.
 // In case it doesn't exist, it will return nil.
-func (kb *dsKeyBook) ReadKey(t thread.ID, p peer.ID) []byte {
+func (kb *dsKeyBook) ReadKey(t thread.ID, p peer.ID) ([]byte, error) {
 	key := genBaseKey(t, p).Child(readSuffix)
 	v, err := kb.ds.Get(key)
 	if err != nil {
-		log.Errorf("error when getting read key from store for peer ID %v", key)
-		return nil
+		return nil, fmt.Errorf("error when getting read key from store for peer ID %v", key)
 	}
-	return v
+	return v, nil
 }
 
 // AddReadKey adds a read key for a peer.ID
 func (kb *dsKeyBook) AddReadKey(t thread.ID, p peer.ID, rk []byte) error {
 	if rk == nil {
-		errors.New("read-key is nil")
+		return fmt.Errorf("read-key is nil")
 	}
 	key := genBaseKey(t, p).Child(readSuffix)
 	if err := kb.ds.Put(key, rk); err != nil {
@@ -149,20 +144,19 @@ func (kb *dsKeyBook) AddReadKey(t thread.ID, p peer.ID, rk []byte) error {
 	return nil
 }
 
-func (kb *dsKeyBook) FollowKey(t thread.ID, p peer.ID) []byte {
+func (kb *dsKeyBook) FollowKey(t thread.ID, p peer.ID) ([]byte, error) {
 	key := genBaseKey(t, p).Child(followSuffix)
 
 	v, err := kb.ds.Get(key)
 	if err != nil {
-		log.Errorf("error when getting follow-key from datastore: %v", err)
-		return nil
+		return nil, fmt.Errorf("error when getting follow-key from datastore: %v", err)
 	}
-	return v
+	return v, nil
 }
 
 func (kb *dsKeyBook) AddFollowKey(t thread.ID, p peer.ID, fk []byte) error {
 	if fk == nil {
-		return errors.New("follow-key is nil")
+		return fmt.Errorf("follow-key is nil")
 	}
 	key := genBaseKey(t, p).Child(followSuffix)
 	if err := kb.ds.Put(key, fk); err != nil {
@@ -171,24 +165,24 @@ func (kb *dsKeyBook) AddFollowKey(t thread.ID, p peer.ID, fk []byte) error {
 	return nil
 }
 
-func (kb *dsKeyBook) LogsWithKeys(t thread.ID) peer.IDSlice {
+func (kb *dsKeyBook) LogsWithKeys(t thread.ID) (peer.IDSlice, error) {
 	ids, err := uniqueLogIds(kb.ds, kbBase.ChildString(base32.RawStdEncoding.EncodeToString(t.Bytes())), func(result query.Result) string {
 		return ds.RawKey(result.Key).Parent().Name()
 	})
 	if err != nil {
-		log.Errorf("error while retrieving logs with addresses: %v", err)
+		return nil, fmt.Errorf("error while retrieving logs with addresses: %v", err)
 	}
-	return ids
+	return ids, nil
 }
 
-func (kb *dsKeyBook) ThreadsFromKeys() thread.IDSlice {
+func (kb *dsKeyBook) ThreadsFromKeys() (thread.IDSlice, error) {
 	ids, err := uniqueThreadIds(kb.ds, kbBase, func(result query.Result) string {
 		return ds.RawKey(result.Key).Parent().Parent().Name()
 	})
 	if err != nil {
-		log.Errorf("error while retrieving threads from keys: %v", err)
+		return nil, fmt.Errorf("error while retrieving threads from keys: %v", err)
 	}
-	return ids
+	return ids, nil
 }
 
 func genBaseKey(t thread.ID, p peer.ID) ds.Key {
