@@ -12,6 +12,7 @@ import (
 	"github.com/alecthomas/jsonschema"
 	ipfslite "github.com/hsanjuan/ipfs-lite"
 	logging "github.com/ipfs/go-log"
+	logging2 "github.com/ipfs/go-log/v2"
 	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/peer"
 	swarm "github.com/libp2p/go-libp2p-swarm"
@@ -41,7 +42,7 @@ func CanDial(addr ma.Multiaddr, s *swarm.Swarm) bool {
 func SetupDefaultLoggingConfig(repoPath string) {
 	_ = os.Setenv("GOLOG_LOG_FMT", "color")
 	_ = os.Setenv("GOLOG_FILE", filepath.Join(repoPath, "log", "threads.log"))
-	logging.SetupLogging()
+	logging2.SetupLogging()
 	logging.SetAllLoggers(logging.LevelError)
 }
 
